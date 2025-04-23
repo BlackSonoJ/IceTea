@@ -1,8 +1,10 @@
+from contextlib import asynccontextmanager
+
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     create_async_engine,
 )
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///database.db"
 
@@ -19,6 +21,11 @@ AsyncSessionLocal = sessionmaker(
 )
 
 
+@asynccontextmanager
 async def get_session():
     async with AsyncSessionLocal() as session:
         yield session
+
+
+class Base(DeclarativeBase):
+    pass

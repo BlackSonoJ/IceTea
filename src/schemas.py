@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ScheduleAddSchema(BaseModel):
@@ -14,3 +14,5 @@ class ScheduleAddSchema(BaseModel):
 
 class ScheduleGetSchema(ScheduleAddSchema):
     id: int
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,26 +1,24 @@
-from contextlib import asynccontextmanager
+import asyncio
 
-from fastapi import FastAPI
 import uvicorn
 
-
-from models import Base
-from database import get_engine
-from routers import router
+from src.servers import fastapi_server, grpc_server
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    engine = get_engine()
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-        yield
-    await engine.dispose().ispose()
+async def start_fastapi():
+    config = uvicorn.Config(
+        app=fastapi_server.app,
+    )
+    server = uvicorn.Server(config)
+    await server.serve()
 
 
-app = FastAPI(lifespan=lifespan)
-app.include_router(router)
+async def main():
+    await asyncio.gather(
+        start_fastapi(),
+        grpc_server.serve(),
+    )
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app")
+    asyncio.run(main())
