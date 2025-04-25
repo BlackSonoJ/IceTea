@@ -5,6 +5,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from generated.protos.schedule import schedule_pb2_grpc, schedule_pb2
 from src.services.schedule_service import ScheduleService
 
+from utils import date_converter
+
 
 class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
 
@@ -32,9 +34,9 @@ class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
         )
 
         if schedule.receipt_duration_end:
-            ts = Timestamp()
-            ts.FromDatetime(datetime.combine(schedule.receipt_duration_end, time.min))
-            result.receipt_duration_end.CopyFrom(ts)
+            result.receipt_duration_end.CopyFrom(
+                date_converter.date_to_timestapm(schedule.receipt_duration_end)
+            )
 
         return schedule_pb2.GetSingleScheduleResponse(schedule=result)
 
@@ -69,11 +71,9 @@ class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
             proto_schedule.user_id = schedule.user_id
 
             if schedule.receipt_duration_end:
-                ts = Timestamp()
-                ts.FromDatetime(
-                    datetime.combine(schedule.receipt_duration_end, time.min)
+                proto_schedule.receipt_duration_end.CopyFrom(
+                    date_converter.date_to_timestapm(schedule.receipt_duration_end)
                 )
-                proto_schedule.receipt_duration_end.CopyFrom(ts)
 
             result.append(proto_schedule)
 
