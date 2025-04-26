@@ -25,7 +25,8 @@ class ScheduleRepository:
             .where(Schedule.user_id == user_id)
             .where(Schedule.id == schedule_id)
         )
-        result = await self.session.execute(query)
+        async with self.session as session:
+            result = await session.execute(query)
         return (
             result.scalar_one_or_none()
         )  # если нет совпадений, вернет None, иначе первый в списке (а у на с список всегда из 1)
@@ -39,11 +40,11 @@ class ScheduleRepository:
             receipt_duration_end=schedule.receipt_duration_end,
             user_id=schedule.user_id,
         )
-        async with self.session.begin():
-            self.session.add(data)
-            await self.session.flush()
+        async with self.session as session:
+            session.add(data)
+            await session.flush()
             schedule_id = data.id
-            await self.session.commit()
+            await session.commit()
         return schedule_id
 
     async def get_schedules_list(
@@ -55,7 +56,8 @@ class ScheduleRepository:
         if user_id is not None:
             query = query.where(Schedule.user_id == user_id)
 
-        result = await self.session.execute(query)
+        async with self.session as session:
+            result = await session.execute(query)
         return result.scalars().all()
 
     async def get_schedules_list_for_today(
@@ -71,6 +73,6 @@ class ScheduleRepository:
                     Schedule.receipt_duration_end >= date.today(),
                 ),
             )
-
-        result = await self.session.execute(query)
+        async with self.session as session:
+            result = await session.execute(query)
         return result.scalars().all()
