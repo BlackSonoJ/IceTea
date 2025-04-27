@@ -14,12 +14,3 @@ def timestamp_to_date(ts: Timestamp):
     if ts:
         dt = ts.ToDatetime()
         return date(year=dt.year, month=dt.month, day=dt.day)
-
-
-if __name__ == "__main__":
-    """
-    Закрой, ты это не видел
-    тесты для слабых
-    """
-    print(date_to_timestapm(date.today()))
-    print(timestamp_to_date(date_to_timestapm(date.today())))

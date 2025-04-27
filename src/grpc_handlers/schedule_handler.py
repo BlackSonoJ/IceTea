@@ -5,7 +5,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from generated.protos.schedule import schedule_pb2_grpc, schedule_pb2
 from src.services.schedule_service import ScheduleService
 
-from utils import date_converter
+from src.utils import date_converter
 
 
 class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
