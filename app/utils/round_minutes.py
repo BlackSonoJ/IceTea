@@ -1,9 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def round_minutes(dt: datetime, round_interval: int = 15) -> datetime:
-    # высчитываем количество минут с 00:00 и округляем вверх (-1 нужно, чтобы не перескачить на интервал вперед)
-    rounded_minutes = (
-        (dt.hour * 60 + dt.minute + round_interval - 1) // round_interval
-    ) * round_interval
-    return dt.replace(hour=rounded_minutes // 60, minute=rounded_minutes % 60)
+    minutes_to_be_added = (
+        round_interval - dt.minute % round_interval
+        if dt.minute % round_interval > 0
+        else 0
+    )
+    return (
+        dt + timedelta(minutes=minutes_to_be_added) if minutes_to_be_added > 0 else dt
+    )
