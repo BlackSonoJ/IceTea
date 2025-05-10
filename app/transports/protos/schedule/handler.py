@@ -1,8 +1,4 @@
-from datetime import datetime, time
-
-from google.protobuf.timestamp_pb2 import Timestamp
-
-from generated.protos.schedule import schedule_pb2_grpc, schedule_pb2
+from app.generated.protos.schedule import schedule_pb2_grpc, schedule_pb2
 from app.services.schedule_service import ScheduleService
 
 from app.utils import date_converter
@@ -11,13 +7,14 @@ from app.utils import date_converter
 class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
 
     def __init__(
-        self, session
+        self,
+        service: ScheduleService,
     ):  # смотришь на это и думаешь, почему в книге было про grpc около страницы
-        self.service = ScheduleService(session=session)
+        self._service = service
 
     async def GetSingleSchedule(self, request, context):
 
-        schedule = await self.service.get_single_schedule(
+        schedule = await self._service.get_schedule(
             user_id=request.user_id,
             schedule_id=request.schedule_id,
         )
@@ -53,13 +50,13 @@ class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
             ),
             "user_id": temp.user_id,
         }
-        result = await self.service.create_single_schedule(
+        result = await self._service.create_schedule(
             schedule=schedule
         )  # передаем dict, так что схему редактивать не пришлось
         return schedule_pb2.CreateSingleScheduleResponse(id=result["schedule_id"])
 
     async def GetSchedulesList(self, request, context):
-        schedules_list = await self.service.get_schedules_list(user_id=request.user_id)
+        schedules_list = await self._service.get_schedules_list(user_id=request.user_id)
         result = []
 
         for schedule in schedules_list:
@@ -81,5 +78,5 @@ class ScheduleServer(schedule_pb2_grpc.ScheduleServerServicer):
 
     async def GetNextTakings(self, request, context):
         return schedule_pb2.GetNextTakingsResponse(
-            medicine_name=await self.service.get_next_takings(user_id=request.user_id)
+            medicine_name=await self._service.get_next_takings(user_id=request.user_id)
         )
