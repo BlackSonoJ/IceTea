@@ -5,7 +5,7 @@ from sqlalchemy.orm import (
     mapped_column,
 )
 
-from .database import Base
+from app.db.base import Base
 
 
 class Schedule(Base):
