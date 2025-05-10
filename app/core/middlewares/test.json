@@ -1,0 +1,22 @@
+{
+        "method": "GET",
+        "header": {
+                "host": "127.0.0.1:8000",
+                "sec-fetch-dest": "empty",
+                "accept": "application/json",
+                "sec-fetch-site": "same-origin",
+                "sec-fetch-mode": "cors",
+                "accept-language": "ru",
+                "priority": "u=3, i",
+                "accept-encoding": "gzip, deflate",
+                "connection": "keep-alive"
+        },
+        "url": "/schedule",
+        "query_params": {
+                "user_id": "1",
+                "schedule_id": "1"
+        },
+        "event": "Request",
+        "level": "info",
+        "timestamp": "2025-05-03T15:31:24.009204Z"
+}
