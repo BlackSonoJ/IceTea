@@ -1,0 +1,75 @@
+2. 
+
+CREATE TABLE developers(  
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid (),
+    name VARCHAR(255),
+    department VARCHAR(255),
+    geolocation POINT,
+    last_known_ip INET,
+    is_available BOOLEAN
+);
+
+3.
+
+                  id                  |       name        | department |       geolocation       |  last_known_ip  | is_available
+--------------------------------------+-------------------+------------+-------------------------+-----------------+--------------
+ 065e8183-3762-46f2-bec8-1064e43cffcd | James Smith       | backend    | (-10.195498,97.128039)  | 122.174.53.40   | t
+ 3ae38c77-3b8c-468d-a35b-ce14f0cd74f0 | John Smith        | frontend   | (19.464194,98.176344)   | 180.50.129.97   | f
+ b741807c-eb2c-4f73-90a3-769010dfb99b | James Smith       | ios        | (-14.223553,111.66716)  | 189.235.118.83  | t
+ 54b9f40a-4f16-4d7a-8b8a-d40fbcdcc61d | Robert Williams   | android    | (77.274852,27.156285)   | 248.158.201.147 | t
+ 1f88762b-bed2-48d2-a22a-ee9ba37b2433 | John Williams     | frontend   | (-71.904469,10.393053)  | 132.76.135.150  | t
+ 3a669118-a1fb-401a-9898-b80f542e7632 | Mary Brown        | android    | (-2.696069,130.587491)  | 157.30.149.207  | t
+ 3ee0fa27-24ee-4a95-bad1-3ae224405200 | Robert Brown      | ios        | (-13.307538,84.540134)  | 218.147.220.107 | t
+ 58edbe43-4c5c-47ab-b231-d4d258d7f9f4 | John Brown        | frontend   | (-49.035267,176.219226) | 137.240.60.77   | f
+ 3352247f-0641-4838-b829-9e24e14061a0 | Patricia Williams | frontend   | (60.417278,-124.361937) | 220.221.158.82  | f
+ a6edf0da-9385-4263-b628-6d044a514d85 | Mary Brown        | backend    | (84.521851,-83.377284)  | 134.68.231.154  | f
+ 417ae198-9a2b-4dff-ad49-81e0d219ae54 | James Jones       | backend    | (64.382227,-105.139085) | 9.251.44.125    | t
+ bc4afe30-4e5b-45b9-b76b-9d4f2c64f0a6 | James Johnson     | ios        | (-39.98066,57.808197)   | 6.6.39.10       | t
+ 800131a2-abba-477d-8716-5727b158b880 | Patricia Smith    | android    | (-78.367982,-94.367122) | 71.183.115.61   | t
+ ed41f213-4f25-49e3-a25a-9c1628bd33c8 | James Jones       | frontend   | (83.653119,-42.245929)  | 134.193.41.189  | t
+ 22d87656-0c0b-40ce-a1e8-0e6711e5ff22 | John Smith        | android    | (65.085005,-175.801353) | 27.72.214.84    | f
+ 224f261f-f5ac-4748-86f6-4eb81ae77495 | Patricia Williams | backend    | (-41.15367,-24.507894)  | 235.81.190.172  | t
+ af0ce7cc-e610-46df-9a25-7f334d49d1b7 | Patricia Jones    | frontend   | (-87.86246,-165.134674) | 18.181.246.169  | t
+ 144f08ce-fab6-4b59-918d-e0e3d48b32d6 | Patricia Jones    | frontend   | (-76.342715,-81.02991)  | 147.196.125.166 | t
+ 6273a6bd-f13e-4913-95c8-a57f769f2122 | James Johnson     | backend    | (46.703294,-109.150781) | 234.141.81.253  | t
+ 4fd3e95f-e8de-4c5a-945d-e8ae735f7f3b | Robert Williams   | backend    | (-22.162073,-44.643969) | 201.223.147.190 | t
+
+* create_developers_rows.sql
+
+4.
+
+homework=# EXPLAIN ANALYZE SELECT * FROM developers WHERE name LIKE 'James%'; 
+                                                QUERY PLAN
+----------------------------------------------------------------------------------------------------------
+ Seq Scan on developers  (cost=0.00..47.39 rows=375 width=60) (actual time=0.027..0.462 rows=375 loops=1)
+   Filter: ((name)::text ~~ 'James%'::text)
+   Rows Removed by Filter: 1576
+ Planning Time: 0.091 ms
+ Execution Time: 0.504 ms
+
+ homework=# EXPLAIN ANALYSE SELECT * FROM developers WHERE department = 'backend'; 
+                                                QUERY PLAN
+----------------------------------------------------------------------------------------------------------
+ Seq Scan on developers  (cost=0.00..47.39 rows=504 width=60) (actual time=0.015..0.302 rows=504 loops=1)
+   Filter: ((department)::text = 'backend'::text)
+   Rows Removed by Filter: 1447
+ Planning Time: 0.140 ms
+ Execution Time: 0.334 ms
+
+ homework=# EXPLAIN ANALYZE SELECT * FROM developers WHERE last_known_ip = '192.168.1.10'; 
+                                              QUERY PLAN
+------------------------------------------------------------------------------------------------------
+ Seq Scan on developers  (cost=0.00..47.39 rows=1 width=60) (actual time=0.312..0.312 rows=0 loops=1)
+   Filter: (last_known_ip = '192.168.1.10'::inet)
+   Rows Removed by Filter: 1951
+ Planning Time: 0.118 ms
+ Execution Time: 0.326 ms
+
+ homework=# EXPLAIN ANALYZE SELECT * FROM developers WHERE is_available = TRUE; 
+                                                 QUERY PLAN
+------------------------------------------------------------------------------------------------------------
+ Seq Scan on developers  (cost=0.00..42.51 rows=1013 width=60) (actual time=0.012..0.284 rows=1013 loops=1)
+   Filter: is_available
+   Rows Removed by Filter: 938
+ Planning Time: 0.079 ms
+ Execution Time: 0.335 ms
