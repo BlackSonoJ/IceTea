@@ -1,0 +1,6 @@
+python3 -m grpc_tools.protoc \
+  --proto_path=./app/transports/protos/schedule \
+  --python_out=./app/generated/protos/schedule \
+  --grpc_python_out=./app/generated/protos/schedule \
+  --pyi_out=./app/generated/protos/schedule \
+  ./app/transports/protos/schedule/schedule.proto
