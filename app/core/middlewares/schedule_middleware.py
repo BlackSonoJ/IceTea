@@ -15,10 +15,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
 
         trace_id = request.headers.get("X-TRACE-ID", str(uuid.uuid4()))
-        structlog.threadlocal.bind_threadlocal(trace_id=trace_id)
-
-        # structlog.contextvars.clear_contextvars()
-        # structlog.contextvars.bind_contextvars(trace_id=trace_id)
+        structlog.contextvars.bind_contextvars(trace_id=trace_id)
 
         logger.info(
             "Request",
@@ -32,7 +29,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         )
 
         response = await call_next(request)
-        structlog.threadlocal.bind_threadlocal(status_code=response.status_code)
+        structlog.contextvars.bind_contextvars(status_code=response.status_code)
 
         logger.info(
             "Response",
